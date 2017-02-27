@@ -1,1 +1,1 @@
-cmd: echo Hello world
+cmd: hack/buildimage.sh;hack/pushimage.sh 

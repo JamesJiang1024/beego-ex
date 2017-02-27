@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    openshift.io/generated-by: JiangWentianLocalVM 
+  labels:
+    app: beego
+  name: beego 
+  namespace: svcrouter-test1
+spec:
+  ports:
+  - name: 8080-tcp
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    deploymentconfig: beego 
+  sessionAffinity: None
+  type: ClusterIP
