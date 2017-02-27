@@ -6,6 +6,7 @@ import (
 	"github.com/astaxie/beego"
 )
 
+// Add comment
 func main() {
 	beego.Run()
 }
