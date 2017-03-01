@@ -1,1 +1,1 @@
-cmd: hack/buildimage.sh;hack/pushimage.sh 
+cmd: hack/buildimage.sh;hack/pushimage.sh;hack/create_oneline_resource.sh;

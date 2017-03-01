@@ -52,4 +52,5 @@ $(document).ready(function () {
     $('#clearbtn').click(function () {
       $('#logoutput').text("")
     });
-});
+
+  });

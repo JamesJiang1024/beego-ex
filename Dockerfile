@@ -10,7 +10,7 @@ RUN rm -f /etc/yum.repos.d/*.repo && \
     yum clean all && \
     mkdir -p /var/lib/origin
 
-COPY .output/* /usr/bin
+COPY .output/* /usr/bin/
 
 WORKDIR /var/lib/origin
 
