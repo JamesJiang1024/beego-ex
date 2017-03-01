@@ -8,5 +8,6 @@ import (
 
 func init() {
 	beego.Router("/", &controllers.MainController{})
+	beego.Router("/join", &controllers.MainController{}, "get:Join")
 	beego.Router("/user", &controllers.UserController{})
 }

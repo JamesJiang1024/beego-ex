@@ -1,0 +1,52 @@
+{{template "base/base.html" .}}
+{{define "head"}}
+<title>航信Openhift集成测试</title>
+{{end}}
+{{define "body"}}
+<div class="col-md-4">
+    <h4>设置测试参数</h4>
+    <form class="form-horizontal">
+        <div class="form-group">
+             <label for="jobname" class="col-sm-4 control-label">任务名称</label>
+             <div class="col-sm-4">
+                 <input id="jobname" type="text" class="form-control"required>
+             </div>
+        </div>
+        <div class="form-group">
+             <label for="parallel" class="col-sm-4 control-label">并发数量</label>
+             <div class="col-sm-4">
+                 <input id="parallel" type="text" class="form-control"required>
+             </div>
+        </div>
+        <div class="form-group">
+             <label for="svcname" class="col-sm-4 control-label">HTTP Service的域名和地址</label>
+             <div class="col-sm-4">
+                 <input id="svcname" type="text" class="form-control"required>
+             </div>
+        </div>
+        <div class="form-group">
+             <label for="solution" class="col-sm-4 control-label"></label>
+             <div class="col-sm-4">
+                 <label><input name="solution" type="radio" class="radio-inline"required> 访问超时/熔断</label>
+                 <label><input name="solution" type="radio" class="radio-inline"required> 访问错误/熔断</label>
+                 <label><input name="solution" type="radio" class="radio-inline"required> 正常模式</label>
+             </div>
+        </div>
+        <div class="form-group">
+           <div class="col-sm-offset-2 col-sm-10">
+              <button type="button" id="sendbtn" class="btn btn-default">发送</button>
+              <button type="button" id="clearbtn" class="btn btn-default">清除数据</button>
+           </div>
+        </div>
+    </form>
+</div>
+
+<div class="col-md-8">
+   <div class="panel panel-info">
+   <div class="panel-heading">日志流</div>
+   <div class="panel-body">
+     <div id="logoutput"></div>
+   </div>
+ </div>
+</div>
+{{end}}
