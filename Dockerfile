@@ -2,7 +2,7 @@
 
 FROM centos:centos7
 
-COPY .output/beego-ex.tar.gz  /usr/bin/
+COPY .output/  /usr/bin/
 
 RUN rm -f /etc/yum.repos.d/*.repo && \
     cd /etc/yum.repos.d && \
@@ -10,8 +10,7 @@ RUN rm -f /etc/yum.repos.d/*.repo && \
     cd /etc/pki/rpm-gpg && \
     curl -LJOs http://172.27.18.49:8888/yum/ius/IUS-COMMUNITY-GPG-KEY && \
     yum clean all && \
-    mkdir -p /var/lib/origin && \
-    tar -zxv /usr/bin/beego-ex.tar.gz
+    mkdir -p /var/lib/origin
 
 
 WORKDIR /var/lib/origin
