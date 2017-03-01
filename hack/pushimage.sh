@@ -1,7 +1,7 @@
 #!/bin/bash
 #sudo docker tag beego-ex:latest registry.travelsky.com/beego/beego-ex:$1
 #sudo docker push registry.travelsky.com/beego/beego-ex:$1 
-version=v1.0-`git rev-parse HEAD | cut -b 1-6`
+version=v1-`git rev-parse HEAD | cut -b 1-6`
 
 echo "Save And Push Images"
 sudo docker save beego-ex:$version > .output/beego-ex.tar
