@@ -28,22 +28,21 @@ type UserController struct {
 
 // Get function is to get user info
 func (c *MainController) Get() {
-	c.Data["Website"] = "wentian"
-	c.Data["Email"] = "jwentian@redhat.com"
 	c.TplName = "websocket.html"
 }
 
-func (this *MainController) Join() {
+// Join function is a web socket connection function to get a websocket handshake
+func (c *MainController) Join() {
 	// Upgrade from http request to WebSocket.
-	ws, err := websocket.Upgrade(this.Ctx.ResponseWriter, this.Ctx.Request, nil, 1024, 1024)
+	ws, err := websocket.Upgrade(c.Ctx.ResponseWriter, c.Ctx.Request, nil, 1024, 1024)
 	if _, ok := err.(websocket.HandshakeError); ok {
-		http.Error(this.Ctx.ResponseWriter, "Not a websocket handshake", 400)
+		http.Error(c.Ctx.ResponseWriter, "Not a websocket handshake", 400)
 		return
 	} else if err != nil {
 		beego.Error("Cannot setup WebSocket connection:", err)
 		return
 	}
-	this.TplName = "websocket.html"
+	c.TplName = "websocket.html"
 	// Message receive loop.
 	for {
 		_, p, err := ws.ReadMessage()
@@ -63,31 +62,35 @@ func (this *MainController) Join() {
 		jobname := mapdata["jobname"].(string)
 		svcname := mapdata["svcname"].(string)
 		intparallel, err := strconv.Atoi(parallel)
-		runParallelHttpCurl(ws, jobname, svcname, intparallel)
+		runParallelHTTPCurl(ws, jobname, svcname, intparallel)
 	}
 }
 
-func runParallelHttpCurl(ws *websocket.Conn, jobname string, svcname string, parallel int) {
-	parallel_num := 0
-	begin_sum := time.Now()
+//runParallelHTTPCurl is a function to run parallel curl to get info in restapi and response to ws
+func runParallelHTTPCurl(ws *websocket.Conn, jobname string, svcname string, parallel int) {
+	parallelNum := 0
+	beginSum := time.Now()
 	versionmap := make(map[string]int)
+	statusmap := make(map[string]int)
 	chhttp := make(chan map[string]interface{}, 100)
 	for i := 0; i < parallel; i++ {
-		go curlHttp(ws, jobname, svcname, parallel, i, chhttp)
+		go curlHTTP(ws, jobname, svcname, parallel, i, chhttp)
 	}
 	for {
 		select {
 		case data := <-chhttp:
 			versionmap[data["version"].(string)]++
-			parallel_num++
+			statusmap[data["statuscode"].(string)]++
+			parallelNum++
 		default:
-			if parallel_num == parallel {
+			if parallelNum == parallel {
 				tr := make(map[string]interface{})
-				dis := time.Since(begin_sum).Seconds()
-				dis_str := strconv.FormatFloat(dis, 'g', 10, 64)
+				dis := time.Since(beginSum).Seconds()
+				disStr := strconv.FormatFloat(dis, 'g', 10, 64)
 				tr["type"] = "summary"
-				tr["dis"] = dis_str
+				tr["dis"] = disStr
 				tr["versionmap"] = versionmap
+				tr["statusmap"] = statusmap
 				trm, _ := json.Marshal(tr)
 				trmstr := strings.Replace(string(trm), " ", "", -1)
 				trmstr = strings.Replace(trmstr, "\n", "", -1)
@@ -101,9 +104,13 @@ func runParallelHttpCurl(ws *websocket.Conn, jobname string, svcname string, par
 	}
 }
 
-func curlHttp(ws *websocket.Conn, jobname string, svcname string, parallel int, jobid int, chhttp chan map[string]interface{}) {
+func curlHTTP(ws *websocket.Conn, jobname string, svcname string, parallel int, jobid int, chhttp chan map[string]interface{}) {
 	begin := time.Now()
-	result, err := httplib.Get(svcname).String()
+	response := httplib.Get(svcname)
+	result, err := response.String()
+
+	resp, err := response.Response()
+
 	tr := make(map[string]interface{})
 
 	if err != nil {
@@ -113,6 +120,7 @@ func curlHttp(ws *websocket.Conn, jobname string, svcname string, parallel int, 
 	tr["data"] = result
 	tr["dis"] = dis
 	tr["jobid"] = jobid
+	tr["statuscode"] = resp.Status
 	tr["type"] = "jobflow"
 
 	userdatamap := make(map[string]interface{})
@@ -134,7 +142,4 @@ func curlHttp(ws *websocket.Conn, jobname string, svcname string, parallel int, 
 
 // Get function is to get user info
 func (c *UserController) Get() {
-	c.Data["Website"] = "user"
-	c.Data["Email"] = "user@redhat.com"
-	c.TplName = "index.tpl"
 }
