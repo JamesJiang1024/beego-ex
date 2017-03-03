@@ -131,6 +131,10 @@ func curlHTTP(ws *websocket.Conn, jobname string, svcname string, parallel int, 
 		tr["version"] = userd["Version"]
 	}
 
+	if tr["version"] == nil {
+		tr["version"] = "unknown"
+	}
+
 	trm, _ := json.Marshal(tr)
 	trmstr := strings.Replace(string(trm), " ", "", -1)
 	trmstr = strings.Replace(trmstr, "\n", "", -1)
