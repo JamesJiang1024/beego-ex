@@ -6,7 +6,7 @@ metadata:
   labels:
     app: beego
   name: beego 
-  namespace: svcrouter-test1
+  namespace: svcrouter-test2
 spec:
   ports:
   - name: 8080-tcp
